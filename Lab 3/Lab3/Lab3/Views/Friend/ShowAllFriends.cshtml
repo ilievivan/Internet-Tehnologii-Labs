@@ -1,0 +1,53 @@
+﻿@model List<Lab3.Models.Friend>
+
+@{
+    ViewBag.Title = "AllFriends";
+}
+
+<h2>All Friends</h2>
+
+<table style="border: 2px solid; text-align: center">
+    <tr style="border: 2px solid">
+        <th style="width: 100px; border-right: 2px solid; text-align: center">
+            Friend ID.
+        </th>
+
+        <th style="width: 200px; border-right: 2px solid; text-align: center">
+            Friend Name
+        </th>
+
+        <th  style="width: 300px; border-right: 2px solid; text-align: center">
+            Place
+        </th>
+
+        <th  style="width: 150px; text-align: center">
+            Tools
+        </th>
+    </tr>
+    @{
+        int i = 0;
+        foreach (var friend in Model)
+        {
+        <tr>
+            <td style="border-right: 2px solid">
+                @friend.Id
+            </td>
+
+            <td style="border-right: 2px solid">
+                @friend.Ime
+            </td>
+
+            <td style="border-right: 2px solid">
+                @friend.MestoZiveenje
+            </td>
+
+            <td>
+                @Html.ActionLink("Edit", "EditFriend", new { id = i }) |
+                @Html.ActionLink("Delete", "DeleteFriend", new { id = i })
+            </td>
+        </tr>
+            i++;
+        }
+    }
+</table>
+

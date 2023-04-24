@@ -1,0 +1,83 @@
+﻿@model IEnumerable<Lab5.Models.Friend>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table id="friendTable" class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Ime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MestoZiveenje)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Ime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.MestoZiveenje)
+                </td>
+                <td>
+                    @if (User.IsInRole("Administrator") || User.IsInRole("Manager"))
+                    {
+                        @Html.ActionLink("Edit", "Edit", new { id = item.Id })
+                    }
+                    | @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+
+                    @if (User.IsInRole("Administrator"))
+                    {
+                        <button data-friend-id="@item.Id" class="btn-link js-delete"> Delete </button>
+                    }
+                    @if (User.IsInRole("Manager"))
+                    {
+                        @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            var table = $("#friendTable").DataTable();
+            $("#friendTable .js-delete").on("click", function () {
+                var button = $(this);
+                bootbox.confirm("Do you want to delete this friend?", function (result) {
+                    if (result) {
+                        $.ajax({
+                            url: "/api/FriendsAPI/" + button.attr("data-friend-id"),
+                            method: "DELETE",
+                            @* The previous one does the same thing but with API Controller
+                                url: "/Friends/Delete/" + button.attr("data-friend-id"),
+                                method: "GET",
+                            *@
+                            success: function () {
+                                table.row(button.parents("tr")).remove().draw();
+                            },
+                            error: function (err) {
+                                console.log(err);
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}
